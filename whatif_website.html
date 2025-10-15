@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>WHAT IF? ($What)</title>
+  <meta name="description" content="What If? — a cinematic, mysterious experience. Roll the cosmic dice." />
+  <style>
+    :root{
+      --bg:#050717;
+      --mid:#0b1730;
+      --gold:#e0b35a;
+      --glow:#ff9f43;
+      --muted:#9aa7bf;
+      --radius:18px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;background:var(--bg);color:#e7eefb;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;-webkit-font-smoothing:antialiased}
+
+    .wrap{min-height:100vh;display:flex;flex-direction:column}
+    header{position:relative;height:75vh;min-height:520px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+
+    .hero-bg{position:absolute;inset:0;background-image:url('/mnt/data/Banner.png');background-size:cover;background-position:center center;opacity:0.98}
+    .hero-gradient{position:absolute;inset:0;background:linear-gradient(180deg, rgba(2,6,15,0.25), rgba(2,6,15,0.7));}
+
+    #starfield{position:absolute;inset:0;pointer-events:none}
+
+    .hero-inner{position:relative;z-index:6;max-width:1100px;width:100%;padding:40px;display:flex;flex-direction:column;align-items:center;text-align:center}
+
+    h1.title{font-family:'Playfair Display', Georgia, serif;letter-spacing:6px;font-weight:700;margin:0;font-size:clamp(36px,7vw,84px);color:rgba(255,255,255,0.95);text-transform:uppercase;text-shadow:0 8px 40px rgba(6,10,20,0.8)}
+    h1.title .accent{color:var(--gold)}
+
+    .dice-wrap{display:flex;align-items:center;gap:18px}
+    .dice{width:110px;height:110px;border-radius:14px;background:linear-gradient(180deg,#07102a,#061225);display:flex;align-items:center;justify-content:center;box-shadow:0 12px 60px rgba(2,8,20,0.6), inset 0 -6px 20px rgba(0,0,0,0.6);transform-style:preserve-3d;transition:transform 900ms cubic-bezier(.2,.9,.3,1)}
+    .dice img{width:72%;height:72%;object-fit:contain}
+    .dice.idle{animation:float 8s ease-in-out infinite}
+    @keyframes float{0%{transform:translateY(0) rotateX(8deg) rotateY(-6deg)}50%{transform:translateY(-10px) rotateX(6deg) rotateY(6deg)}100%{transform:translateY(0) rotateX(8deg) rotateY(-6deg)}}
+
+    .enter-btn{margin-top:22px;padding:14px 26px;border-radius:999px;background:linear-gradient(90deg, rgba(255,159,67,0.14), rgba(224,179,90,0.06));border:1px solid rgba(224,179,90,0.06);cursor:pointer;color:var(--glow);font-weight:600;letter-spacing:1px}
+    .enter-btn:hover{box-shadow:0 6px 30px rgba(255,159,67,0.06);transform:translateY(-2px)}
+
+    main{flex:1;display:flex;padding:80px 20px 60px;align-items:center;justify-content:center}
+    .stage{max-width:1100px;width:100;display:grid;grid-template-columns:1fr;gap:36px;align-items:center}
+
+    .portal{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:38px;border-radius:var(--radius);box-shadow:0 30px 80px rgba(2,6,14,0.6);border:1px solid rgba(255,255,255,0.03)}
+
+    .question{min-height:140px;display:flex;align-items:center;justify-content:center;padding:28px;color:#f7f8fb;font-size:clamp(20px,3.8vw,28px);font-family:'Cormorant Garamond', serif;text-align:center;line-height:1.28}
+
+    .portal-footer{display:flex;gap:18px;align-items:center;justify-content:center;margin-top:22px}
+    .roll-btn{padding:14px 22px;border-radius:12px;background:linear-gradient(180deg,var(--glow),#c87a24);color:#08101f;font-weight:700;cursor:pointer;box-shadow:0 10px 40px rgba(255,159,67,0.12)}
+
+    .token{display:flex;flex-direction:column;align-items:center;gap:12px;padding:28px;border-radius:14px;background:linear-gradient(180deg, rgba(0,0,0,0.28), rgba(255,255,255,0.02));border:1px solid rgba(255,255,255,0.03)}
+    .token h3{margin:0;font-family:'Playfair Display', serif;font-size:20px}
+    .links{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+    .link-btn{padding:10px 14px;border-radius:10px;background:transparent;border:1px solid rgba(224,179,90,0.08);color:var(--muted);font-weight:600}
+    .link-btn:hover{color:var(--glow)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="hero-bg"></div>
+      <div class="hero-gradient"></div>
+      <canvas id="starfield"></canvas>
+      <div class="hero-inner">
+        <div class="dice-wrap">
+          <div class="dice idle" id="heroDice">
+            <img src="/mnt/data/Logo.gif" alt="What If icon" />
+          </div>
+        </div>
+        <h1 class="title"><span class="accent">WHAT</span> IF?</h1>
+        <button class="enter-btn" id="enterBtn">Enter the Thought</button>
+      </div>
+    </header>
+
+    <main>
+      <div class="stage">
+        <section class="portal">
+          <div class="question" id="question">What if...</div>
+          <div class="portal-footer">
+            <button class="roll-btn" id="rollBtn">Roll the Dice</button>
+            <div style="color:var(--muted);font-size:0.95rem;">Ticker: <strong style="color:var(--gold)">$What</strong></div>
+          </div>
+        </section>
+
+        <aside class="token">
+          <h3>$What Token</h3>
+          <p style="max-width:320px;color:var(--muted);margin:0;font-size:0.95rem;">A curiosity-driven token. Minimal utility, maximal mystery.</p>
+          <div class="links" style="margin-top:14px">
+            <a class="link-btn" href="#">Buy $What</a>
+            <a class="link-btn" href="#">Chart</a>
+            <a class="link-btn" href="#">Contract</a>
+            <a class="link-btn" href="#">Community</a>
+          </div>
+        </aside>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    (()=>{
+      const canvas=document.getElementById('starfield');
+      const ctx=canvas.getContext('2d');
+      let w=canvas.width=window.innerWidth,h=canvas.height=window.innerHeight*0.9;
+      const stars=[];const STAR_COUNT=Math.round((w*h)/12000);
+      function rand(a,b){return a+Math.random()*(b-a)}
+      function init(){stars.length=0;for(let i=0;i<STAR_COUNT;i++){stars.push({x:Math.random()*w,y:Math.random()*h,z:rand(0.2,1.8),r:rand(0.3,1.8),vx:rand(-0.02,0.02)})}}
+      function resize(){w=canvas.width=window.innerWidth;h=canvas.height=window.innerHeight*0.9;init()}
+      window.addEventListener('resize',resize);init();
+      function draw(){ctx.clearRect(0,0,w,h);for(const s of stars){s.x+=s.vx;if(s.x<0)s.x=w;if(s.x>w)s.x=0;const a=0.28+(s.z*0.4);ctx.beginPath();ctx.fillStyle=`rgba(255,210,170,${a})`;ctx.globalCompositeOperation='lighter';ctx.arc(s.x,s.y,s.r,0,Math.PI*2);ctx.fill()}ctx.globalCompositeOperation='source-over';requestAnimationFrame(draw)}
+      draw();
+    })();
+
+    const rollBtn=document.getElementById('rollBtn');
+    const questionEl=document.getElementById('question');
+    const heroDice=document.getElementById('heroDice');
+    const enterBtn=document.getElementById('enterBtn');
+
+    const questions=[
+      'What if Bitcoin was secretly run by cats?',
+      'What if AI started trading meme coins better than humans?',
+      'What if Elon Musk bought the moon and named it Doge II?',
+      'What if your morning coffee could mine $What?',
+      'What if every crypto dip was just the universe breathing?',
+      'What if McDonalds accepted memes as currency?',
+      'What if your fridge had feelings about your diet?',
+      'What if the stock market ran on vibes and horoscopes?',
+      'What if politicians were paid in karma points?',
+      'What if gravity decided to take a day off?',
+      'What if your phone could predict your next bad decision?',
+      'What if aliens invented NFTs just to watch us panic?',
+      'What if every influencer tweet changed the weather?',
+      'What if your dreams were livestreamed to the metaverse?',
+      'What if the blockchain started writing poetry?',
+      'What if taxes were collected in meme format?',
+      'What if the internet had a hangover button?',
+      'What if time zones were replaced by mood zones?',
+      'What if the universe shorted your favorite token?',
+      'What if $What became the language of thought?'
+    ];
+
+    function pick(){return questions[Math.floor(Math.random()*questions.length)]}
+    function animateDice(){heroDice.classList.remove('idle');heroDice.style.transform='rotateX(520deg) rotateY(310deg)';setTimeout(()=>{heroDice.classList.add('idle');heroDice.style.transform=''},900)}
+
+    async function roll(){
+      rollBtn.disabled=true;rollBtn.textContent='Rolling...';
+      animateDice();
+      const q=pick();
+      questionEl.style.opacity=0;questionEl.style.filter='drop-shadow(0 0 0 rgba(255,159,67,0))';
+      await new Promise(r=>setTimeout(r,420));
+      questionEl.textContent=q;
+      questionEl.style.transition='opacity 420ms ease, filter 600ms ease';
+      questionEl.style.opacity=1;questionEl.style.filter='drop-shadow(0 0 26px rgba(255,159,67,0.08))';
+      rollBtn.textContent='Roll the Dice';rollBtn.disabled=false;
+    }
+
+    rollBtn.addEventListener('click',roll);
+    enterBtn.addEventListener('click',()=>{window.scrollTo({top:document.querySelector('main').offsetTop-20,behavior:'smooth'})});
+  </script>
+</body>
+</html>
