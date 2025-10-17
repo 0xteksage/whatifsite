@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>WHAT IF? — Main</title>
+  <meta name="description" content="Main page for What If?" />
+  <style>
+    :root{--bg:#050717;--muted:#9aa7bf;--gold:#e0b35a;--radius:18px}
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;background:var(--bg);color:#e7eefb;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial}
+    main{display:flex;align-items:center;justify-content:center;padding:80px 20px}
+    .stage{max-width:1100px;width:100%;display:grid;grid-template-columns:1fr;gap:36px;align-items:center}
+    .portal{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:38px;border-radius:var(--radius);box-shadow:0 30px 80px rgba(2,6,14,0.6);border:1px solid rgba(255,255,255,0.03)}
+    .question{min-height:140px;display:flex;align-items:center;justify-content:center;padding:28px;color:#f7f8fb;font-size:clamp(20px,3.8vw,28px);font-family:'Cormorant Garamond', serif;text-align:center}
+    .portal-footer{display:flex;gap:18px;align-items:center;justify-content:center;margin-top:22px}
+    .roll-btn{padding:14px 22px;border-radius:12px;background:linear-gradient(180deg,#ff9f43,#c87a24);color:#08101f;font-weight:700;cursor:pointer}
+    .token{display:flex;flex-direction:column;align-items:center;gap:12px;padding:28px;border-radius:14px;background:linear-gradient(180deg, rgba(0,0,0,0.28), rgba(255,255,255,0.02));border:1px solid rgba(255,255,255,0.03)}
+    .links{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+    .link-btn{padding:10px 14px;border-radius:10px;background:transparent;border:1px solid rgba(224,179,90,0.08);color:var(--muted);font-weight:600}
+  </style>
+</head>
+<body>
+  <main>
+    <div class="stage">
+      <section class="portal">
+        <div class="question" id="question">What if...</div>
+        <div class="portal-footer">
+          <button class="roll-btn" id="rollBtn">Roll the Dice</button>
+          <div style="color:var(--muted);font-size:0.95rem;">Ticker: <strong style="color:var(--gold)">$What</strong></div>
+        </div>
+      </section>
+
+      <aside class="token">
+        <h3>$What Token</h3>
+        <p style="max-width:320px;color:var(--muted);margin:0;font-size:0.95rem;">A curiosity-driven token. Minimal utility, maximal mystery.</p>
+        <div class="links" style="margin-top:14px">
+          <a class="link-btn" href="#">Buy $What</a>
+          <a class="link-btn" href="#">Chart</a>
+          <a class="link-btn" href="#">Contract</a>
+          <a class="link-btn" href="#">Community</a>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <script>
+    // Reuse question list and roll logic from index (kept simple and self-contained here)
+    const rollBtn=document.getElementById('rollBtn');
+    const questionEl=document.getElementById('question');
+    const questions=[
+      'What if Bitcoin was secretly run by cats?',
+      'What if AI started trading meme coins better than humans?',
+      'What if Elon Musk bought the moon and named it Doge II?',
+      'What if your morning coffee could mine $What?',
+      'What if every crypto dip was just the universe breathing?',
+      'What if McDonalds accepted memes as currency?',
+      'What if your fridge had feelings about your diet?',
+      'What if the stock market ran on vibes and horoscopes?',
+      'What if politicians were paid in karma points?',
+      'What if gravity decided to take a day off?',
+      'What if your phone could predict your next bad decision?',
+      'What if aliens invented NFTs just to watch us panic?',
+      'What if every influencer tweet changed the weather?',
+      'What if your dreams were livestreamed to the metaverse?',
+      'What if the blockchain started writing poetry?',
+      'What if taxes were collected in meme format?',
+      'What if the internet had a hangover button?',
+      'What if time zones were replaced by mood zones?',
+      'What if the universe shorted your favorite token?',
+      'What if $What became the language of thought?'
+    ];
+    function pick(){return questions[Math.floor(Math.random()*questions.length)]}
+    async function roll(){
+      if(!rollBtn) return;
+      rollBtn.disabled=true;rollBtn.textContent='Rolling...';
+      const q=pick();
+      if(questionEl){questionEl.style.opacity=0;await new Promise(r=>setTimeout(r,420));questionEl.textContent=q;questionEl.style.transition='opacity 420ms ease';questionEl.style.opacity=1}
+      rollBtn.textContent='Roll the Dice';rollBtn.disabled=false;
+    }
+    if(rollBtn) rollBtn.addEventListener('click',roll);
+  </script>
+</body>
+</html>
