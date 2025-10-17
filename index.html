@@ -17,27 +17,29 @@
     *{box-sizing:border-box}
     html,body{height:100%;margin:0;background:var(--bg);color:#e7eefb;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;-webkit-font-smoothing:antialiased}
 
-    .wrap{min-height:100vh;display:flex;flex-direction:column}
-    header{position:relative;height:75vh;min-height:520px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+  .wrap{min-height:100vh;display:flex;flex-direction:column}
+  /* Make the header occupy the full viewport so it's the main landing surface */
+  header{position:relative;height:100vh;min-height:420px;display:flex;align-items:center;justify-content:center;overflow:hidden}
 
     .hero-bg{position:absolute;inset:0;background-image:url('Banner.png');background-size:cover;background-position:center center;opacity:0.98}
     .hero-gradient{position:absolute;inset:0;background:linear-gradient(180deg, rgba(2,6,15,0.25), rgba(2,6,15,0.7));}
 
-    #starfield{position:absolute;inset:0;pointer-events:none}
+  /* Starfield positioned to cover the header area (height set via JS) */
+  #starfield{position:absolute;left:0;right:0;top:0;pointer-events:none}
 
-    .hero-inner{position:relative;z-index:6;max-width:1100px;width:100%;padding:40px;display:flex;flex-direction:column;align-items:center;text-align:center}
+  .hero-inner{position:relative;z-index:6;max-width:1100px;width:100%;padding:clamp(20px,4vw,60px);display:flex;flex-direction:column;align-items:center;text-align:center}
 
-    h1.title{font-family:'Playfair Display', Georgia, serif;letter-spacing:6px;font-weight:700;margin:0;font-size:clamp(36px,7vw,84px);color:rgba(255,255,255,0.95);text-transform:uppercase;text-shadow:0 8px 40px rgba(6,10,20,0.8)}
+  h1.title{font-family:'Playfair Display', Georgia, serif;letter-spacing:clamp(2px,1.6vw,8px);font-weight:700;margin:0;font-size:clamp(32px,6.5vw,96px);color:rgba(255,255,255,0.95);text-transform:uppercase;text-shadow:0 8px 40px rgba(6,10,20,0.8)}
     h1.title .accent{color:var(--gold)}
 
     .dice-wrap{display:flex;align-items:center;gap:18px}
-    .dice{width:110px;height:110px;border-radius:14px;background:linear-gradient(180deg,#07102a,#061225);display:flex;align-items:center;justify-content:center;box-shadow:0 12px 60px rgba(2,8,20,0.6), inset 0 -6px 20px rgba(0,0,0,0.6);transform-style:preserve-3d;transition:transform 900ms cubic-bezier(.2,.9,.3,1)}
-    .dice img{width:72%;height:72%;object-fit:contain}
+  .dice{width:clamp(80px,10vw,140px);height:clamp(80px,10vw,140px);border-radius:14px;background:linear-gradient(180deg,#07102a,#061225);display:flex;align-items:center;justify-content:center;box-shadow:0 12px 60px rgba(2,8,20,0.6), inset 0 -6px 20px rgba(0,0,0,0.6);transform-style:preserve-3d;transition:transform 900ms cubic-bezier(.2,.9,.3,1)}
+  .dice img{width:72%;height:72%;object-fit:contain}
     .dice.idle{animation:float 8s ease-in-out infinite}
     @keyframes float{0%{transform:translateY(0) rotateX(8deg) rotateY(-6deg)}50%{transform:translateY(-10px) rotateX(6deg) rotateY(6deg)}100%{transform:translateY(0) rotateX(8deg) rotateY(-6deg)}}
 
-    .enter-btn{margin-top:22px;padding:14px 26px;border-radius:999px;background:linear-gradient(90deg, rgba(255,159,67,0.14), rgba(224,179,90,0.06));border:1px solid rgba(224,179,90,0.06);cursor:pointer;color:var(--glow);font-weight:600;letter-spacing:1px}
-    .enter-btn:hover{box-shadow:0 6px 30px rgba(255,159,67,0.06);transform:translateY(-2px)}
+  .enter-btn{margin-top:clamp(12px,2.5vw,28px);padding:clamp(10px,1.8vw,16px) clamp(18px,3.2vw,28px);border-radius:999px;background:linear-gradient(90deg, rgba(255,159,67,0.14), rgba(224,179,90,0.06));border:1px solid rgba(224,179,90,0.06);cursor:pointer;color:var(--glow);font-weight:600;letter-spacing:1px;text-decoration:none;display:inline-block}
+  .enter-btn:hover{box-shadow:0 6px 30px rgba(255,159,67,0.06);transform:translateY(-2px)}
 
     main{flex:1;display:flex;padding:80px 20px 60px;align-items:center;justify-content:center}
     .stage{max-width:1100px;width:100;display:grid;grid-template-columns:1fr;gap:36px;align-items:center}
@@ -54,6 +56,18 @@
     .links{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
     .link-btn{padding:10px 14px;border-radius:10px;background:transparent;border:1px solid rgba(224,179,90,0.08);color:var(--muted);font-weight:600}
     .link-btn:hover{color:var(--glow)}
+
+    /* Responsive tweaks */
+    @media (max-width:520px){
+      header{min-height:380px}
+      h1.title{font-size:clamp(22px,10vw,44px)}
+      .hero-inner{padding:18px}
+    }
+
+    @media (min-width:1600px){
+      .hero-inner{max-width:1400px}
+      h1.title{font-size:clamp(48px,6vw,120px)}
+    }
   </style>
 </head>
 <body>
@@ -80,13 +94,33 @@
     (()=>{
       const canvas=document.getElementById('starfield');
       const ctx=canvas.getContext('2d');
-      let w=canvas.width=window.innerWidth,h=canvas.height=window.innerHeight*0.9;
-      const stars=[];const STAR_COUNT=Math.round((w*h)/12000);
+      const headerEl = document.querySelector('header');
+      function headerHeight(){ return headerEl ? headerEl.clientHeight : window.innerHeight }
+      let w = canvas.width = window.innerWidth;
+      let h = canvas.height = headerHeight();
+      const stars=[];let STAR_COUNT = Math.max(20, Math.round((w*h)/12000));
       function rand(a,b){return a+Math.random()*(b-a)}
-      function init(){stars.length=0;for(let i=0;i<STAR_COUNT;i++){stars.push({x:Math.random()*w,y:Math.random()*h,z:rand(0.2,1.8),r:rand(0.3,1.8),vx:rand(-0.02,0.02)})}}
-      function resize(){w=canvas.width=window.innerWidth;h=canvas.height=window.innerHeight*0.9;init()}
+      function init(){
+        w = canvas.width = window.innerWidth;
+        h = canvas.height = headerHeight();
+        STAR_COUNT = Math.max(20, Math.round((w*h)/12000));
+        stars.length=0;
+        for(let i=0;i<STAR_COUNT;i++){
+          stars.push({x:Math.random()*w,y:Math.random()*h,z:rand(0.2,1.8),r:rand(0.3,1.8),vx:rand(-0.02,0.02)})
+        }
+      }
+      function resize(){ init() }
       window.addEventListener('resize',resize);init();
-      function draw(){ctx.clearRect(0,0,w,h);for(const s of stars){s.x+=s.vx;if(s.x<0)s.x=w;if(s.x>w)s.x=0;const a=0.28+(s.z*0.4);ctx.beginPath();ctx.fillStyle=`rgba(255,210,170,${a})`;ctx.globalCompositeOperation='lighter';ctx.arc(s.x,s.y,s.r,0,Math.PI*2);ctx.fill()}ctx.globalCompositeOperation='source-over';requestAnimationFrame(draw)}
+      function draw(){
+        ctx.clearRect(0,0,w,h);
+        for(const s of stars){
+          s.x+=s.vx;if(s.x<0)s.x=w;if(s.x>w)s.x=0;
+          const a=0.28+(s.z*0.4);
+          ctx.beginPath();ctx.fillStyle=`rgba(255,210,170,${a})`;ctx.globalCompositeOperation='lighter';ctx.arc(s.x,s.y,s.r,0,Math.PI*2);ctx.fill()
+        }
+        ctx.globalCompositeOperation='source-over';
+        requestAnimationFrame(draw)
+      }
       draw();
     })();
 
